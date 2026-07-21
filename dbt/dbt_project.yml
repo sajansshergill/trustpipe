@@ -1,0 +1,19 @@
+name: trustpipe
+version: "1.0.0"
+config-version: 2
+profile: trustpipe
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+
+models:
+  trustpipe:
+    staging:
+      +materialized: view
+      +schema: staging
+    intermediate:
+      +materialized: ephemeral
+    marts:
+      +materialized: table
+      +schema: marts

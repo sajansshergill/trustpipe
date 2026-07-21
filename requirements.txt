@@ -1,0 +1,13 @@
+pandas>=2.1
+pyarrow>=14.0
+requests>=2.31
+pyyaml>=6.0
+snowflake-connector-python[pandas]>=3.7
+kafka-python>=2.0
+scikit-learn>=1.4
+statsmodels>=0.14
+great-expectations>=0.18
+dbt-snowflake>=1.7
+apache-airflow>=2.9
+pytest>=8.0
+ruff>=0.4

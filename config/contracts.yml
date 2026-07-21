@@ -1,0 +1,44 @@
+# Data contracts — the source-of-truth for what each ingest source is allowed to deliver.
+# A contract violation blocks the load rather than poisoning downstream tables.
+
+yellow_trips:
+  description: "NYC TLC yellow taxi trip records"
+  primary_keys: [vendor_id, tpep_pickup_datetime, tpep_dropoff_datetime]
+  columns:
+    vendor_id:            {dtype: int,      nullable: false, allowed: [1, 2, 6, 7]}
+    tpep_pickup_datetime: {dtype: datetime, nullable: false}
+    tpep_dropoff_datetime: {dtype: datetime, nullable: false}
+    passenger_count:      {dtype: float,    nullable: true,  min: 0,    max: 9}
+    trip_distance:        {dtype: float,    nullable: false, min: 0,    max: 1000}
+    pu_location_id:       {dtype: int,      nullable: false, min: 1,    max: 265}
+    do_location_id:       {dtype: int,      nullable: false, min: 1,    max: 265}
+    fare_amount:          {dtype: float,    nullable: false, min: -100, max: 5000}
+    tip_amount:           {dtype: float,    nullable: true,  min: 0,    max: 1000}
+    total_amount:         {dtype: float,    nullable: false, min: -100, max: 6000}
+    payment_type:         {dtype: int,      nullable: true,  allowed: [0,1,2,3,4,5,6]}
+  freshness_sla_hours: 26          # a daily batch is late if older than this
+  expected_daily_row_min: 50000    # volume floor — alert below this
+  expected_daily_row_max: 500000   # volume ceiling — alert above this
+
+weather:
+  description: "NOAA hourly weather enrichment, keyed by zone-hour"
+  primary_keys: [zone_id, observed_at]
+  columns:
+    zone_id:      {dtype: int,      nullable: false, min: 1, max: 265}
+    observed_at:  {dtype: datetime, nullable: false}
+    temp_c:       {dtype: float,    nullable: true,  min: -40, max: 55}
+    precip_mm:    {dtype: float,    nullable: true,  min: 0,   max: 500}
+    wind_kph:     {dtype: float,    nullable: true,  min: 0,   max: 300}
+  freshness_sla_hours: 3
+
+ride_stream:
+  description: "Synthetic live ride events arriving via Kafka"
+  primary_keys: [event_id]
+  columns:
+    event_id:     {dtype: str,      nullable: false}
+    vendor_id:    {dtype: int,      nullable: false, allowed: [1, 2, 6, 7]}
+    pickup_ts:    {dtype: datetime, nullable: false}
+    pu_location_id: {dtype: int,     nullable: false, min: 1, max: 265}
+    do_location_id: {dtype: int,     nullable: false, min: 1, max: 265}
+    fare_amount:  {dtype: float,    nullable: false, min: 0, max: 5000}
+  freshness_sla_hours: 1

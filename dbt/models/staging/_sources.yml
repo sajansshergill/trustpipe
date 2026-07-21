@@ -1,0 +1,29 @@
+version: 2
+
+sources:
+  - name: raw
+    database: TRUSTPIPE
+    schema: RAW
+    description: "Landing zone. Populated by the ingest layer after contract checks pass."
+    tables:
+      - name: yellow_trips
+        loaded_at_field: TPEP_PICKUP_DATETIME
+        freshness:
+          warn_after: {count: 26, period: hour}
+          error_after: {count: 48, period: hour}
+        columns:
+          - name: vendor_id
+            tests: [not_null]
+      - name: weather
+        loaded_at_field: OBSERVED_AT
+        freshness:
+          warn_after: {count: 3, period: hour}
+          error_after: {count: 6, period: hour}
+      - name: ride_stream
+        loaded_at_field: PICKUP_TS
+        freshness:
+          warn_after: {count: 1, period: hour}
+          error_after: {count: 3, period: hour}
+        columns:
+          - name: event_id
+            tests: [not_null, unique]
