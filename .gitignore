@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+.env
+dbt/logs/
+dbt/dbt_packages/
+dbt/target/
+dbt/.user.yml
+
+*.parquet

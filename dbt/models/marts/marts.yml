@@ -13,33 +13,39 @@ models:
         tests:
           - not_null
           - relationships:
-              to: ref('dim_vendor')
-              field: vendor_id
+              arguments:
+                to: ref('dim_vendor')
+                field: vendor_id
       - name: pu_location_id
         tests:
           - relationships:
-              to: ref('dim_zone')
-              field: zone_id
+              arguments:
+                to: ref('dim_zone')
+                field: zone_id
       - name: do_location_id
         tests:
           - relationships:
-              to: ref('dim_zone')
-              field: zone_id
+              arguments:
+                to: ref('dim_zone')
+                field: zone_id
       - name: fare_amount
         tests:
           - dbt_expectations.expect_column_values_to_be_between:
-              min_value: -100
-              max_value: 5000
+              arguments:
+                min_value: -100
+                max_value: 5000
       - name: trip_distance
         tests:
           - dbt_expectations.expect_column_values_to_be_between:
-              min_value: 0
-              max_value: 1000
-              row_condition: "trip_distance is not null"
+              arguments:
+                min_value: 0
+                max_value: 1000
+                row_condition: "trip_distance is not null"
       - name: ingest_source
         tests:
           - accepted_values:
-              values: ['batch', 'stream']
+              arguments:
+                values: ['batch', 'stream']
 
   - name: dim_zone
     columns:
