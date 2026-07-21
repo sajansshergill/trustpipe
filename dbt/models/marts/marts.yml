@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: fact_trips
+    description: "Trip fact at one-row-per-trip grain, enriched with weather."
+    columns:
+      - name: trip_key
+        description: "Surrogate key. Unique across batch + stream sources."
+        tests:
+          - not_null
+          - unique
+      - name: vendor_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_vendor')
+              field: vendor_id
+      - name: pu_location_id
+        tests:
+          - relationships:
+              to: ref('dim_zone')
+              field: zone_id
+      - name: do_location_id
+        tests:
+          - relationships:
+              to: ref('dim_zone')
+              field: zone_id
+      - name: fare_amount
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: -100
+              max_value: 5000
+      - name: trip_distance
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1000
+              row_condition: "trip_distance is not null"
+      - name: ingest_source
+        tests:
+          - accepted_values:
+              values: ['batch', 'stream']
+
+  - name: dim_zone
+    columns:
+      - name: zone_id
+        tests: [not_null, unique]
+
+  - name: dim_vendor
+    columns:
+      - name: vendor_id
+        tests: [not_null, unique]
+
+  - name: dim_datetime
+    columns:
+      - name: datetime_key
+        tests: [not_null, unique]
