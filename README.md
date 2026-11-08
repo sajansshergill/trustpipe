@@ -6,6 +6,23 @@ TrustPipe is an end-to-end ELT platform built on the NYC TLC trip record dataset
 
 Built by an engineer with a QA/SDET background, TrustPipe treats data quality as the product rather than a bolt-on.
 
+![TrustPipe demo](docs/demo.gif)
+
+## The console
+
+TrustPipe's serving layer is an interactive reliability console (`app/dashboard.py`, Streamlit + Plotly) that runs standalone on deterministic demo data shaped from `config/contracts.yml`, the dbt star schema and the quality suites in this repo — no warehouse connection required:
+
+- **Live sidebar filters** — date range, boroughs, ingest source (batch / stream), minimum reliability score and quality layers; every chart, table and KPI re-renders instantly.
+- **KPI cards with deltas** — trips validated vs. the prior equal-length period, contract pass rate, quarantined rows, reliability score and freshness against the 26h / 1h SLAs.
+- **Quality gates** — contract, dbt test, Great Expectations and monitor checks in one view, with failure counts and the pass-rate dips that mark the volume, fare and drift incidents.
+- **Animated charts** — Plotly `animation_frame` views: daily trips by borough and a cumulative quarantined-rows race you can play.
+- **3D trust space** — a rotatable `Scatter3d` of sampled trips in distance × fare × duration space (quarantined rows stand apart), plus a borough × date reliability **surface terrain** (drag to orbit, scroll to zoom).
+- **Contracts & quarantine** — the declared rules for `yellow_trips`, `weather` and `ride_stream`, the quarantined sample that a violation blocks from RAW, and the fare distribution behind it.
+- **Zones, boroughs & scorecard** — borough rollups from `dim_zone` / `fact_trips` and the published reliability scorecard (contracts 35%, dbt gates 25%, runtime quality 25%, automation 15%).
+- **Dark UI** — gradient hero header, glass KPI cards and a custom dark theme (`.streamlit/config.toml` + inline CSS).
+
+Run it with: `streamlit run app/dashboard.py`
+
 ---
 
 ## Why This Project Exists
